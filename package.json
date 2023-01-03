@@ -1,0 +1,14 @@
+{
+  "name": "tiger_db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "driver.js",
+  "type" : "module",
+  "bin" : "driver.js",
+  "scripts": {
+    "start": "node driver.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
