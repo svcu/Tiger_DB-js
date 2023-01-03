@@ -27,3 +27,4 @@ db.insert("John", body);
 - update(key, property, new_value) -> OK
 - delete(key) -> OK
 - dfs(key) -> String[]
+- bfs(key) -> String[]
