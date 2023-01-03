@@ -2,7 +2,11 @@
 
 JavaScript driver for Tiger_DB
 
+`npm i tiger_db-js`
+
 ## EXAMPLE INSERT
+
+
 
 ```js
 const {Instance} = require("tiger_db-js")
