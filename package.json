@@ -1,10 +1,10 @@
 {
   "name": "tiger_db-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "driver.js",
-  "type" : "module",
-  "bin" : "driver.js",
+  "type": "module",
+  "bin": "driver.js",
   "scripts": {
     "start": "node driver.js"
   },
