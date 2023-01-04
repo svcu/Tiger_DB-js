@@ -25,8 +25,6 @@ class Instance{
                 }
             }
 
-            console.log(string)
-
             const socket = new Socket().connect(2310, this.uri, (e)=>{
                 if (e) throw e
             })
