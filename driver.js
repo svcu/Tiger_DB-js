@@ -1,7 +1,6 @@
-import {Socket} from "net"
+const {Socket} = require("net")
 
-
-export class Instance{
+class Instance{
     constructor(uri){
         this.uri = uri;
 
@@ -245,4 +244,8 @@ export class Instance{
             return data.toJSON();
         })
     }
+}
+
+module.exports = {
+    Instance
 }
