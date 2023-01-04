@@ -4,6 +4,12 @@ JavaScript driver for Tiger_DB
 
 `npm i tiger_db-js`
 
+# Installation
+
+- Download the latest release on https://github.com/svcu/Tiger_DB/releases/tag/release
+- Run the executable
+
+
 ## EXAMPLE INSERT
 
 
@@ -32,3 +38,4 @@ db.insert("John", body);
 - delete(key) -> OK
 - dfs(key) -> String[]
 - bfs(key) -> String[]
+- add_vertex(key, vertex) -> OK 
