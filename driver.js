@@ -214,6 +214,37 @@ class Instance{
             return data.toJSON();
         })
     }
+
+    add_vertex(key, vertex){
+
+        const body = {
+            instruction : "add_vertex",
+            key: key,
+            vertex: vertex
+        }
+
+
+        const socket = new Socket().connect(2310, this.uri, (e)=>{
+            if (e) throw e
+        })
+
+        socket.on("connect", (error)=>{
+            if (error) throw error
+
+            socket.write(JSON.stringify(body)+"\n", (e)=>{
+                if (e) throw e
+            })
+
+            socket.write("close\n", (e)=>{
+                if (e) throw e
+            })
+        })
+
+        socket.on("data", (data)=>{
+            socket.destroy();
+            return data.toJSON();
+        })
+    }
 }
 
 module.exports = {Instance}
