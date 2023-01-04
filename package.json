@@ -3,8 +3,6 @@
   "version": "1.0.2",
   "description": "",
   "main": "driver.js",
-  "type": "module",
-  "bin": "driver.js",
   "scripts": {
     "start": "node driver.js"
   },

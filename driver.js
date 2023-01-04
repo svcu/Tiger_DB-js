@@ -1,7 +1,7 @@
 import {Socket} from "net"
 
 
-class Instance{
+export class Instance{
     constructor(uri){
         this.uri = uri;
 
@@ -246,5 +246,3 @@ class Instance{
         })
     }
 }
-
-module.exports = {Instance}
