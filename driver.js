@@ -1,37 +1,212 @@
-const {Socket} = require("net")
+const { rejects } = require("assert");
+const {Socket} = require("net");
+const { resolve } = require("path");
 
 class Instance{
-    constructor(uri){
+
+   
+
+    constructor(uri = "127.0.0.1"){
         this.uri = uri;
 
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) console.error(e)
-            socket.write("close\n");
-            socket.destroy();
-        });
     }
 
-    insert(key, value, ref=false, to=""){
-        
-        if (!ref){
-            const body = {
-                instruction : "insert",
-                key: key,
-                entry: {
-                    entry_type : "normal",
-                    schema : "false",
-                    vertices: [],
-                    data: value
+    async insert(key, value, ref=false, to=""){
+
+
+        return new Promise((resolve, reject) =>{
+            if (!ref){
+                const body = {
+                    instruction : "insert",
+                    key: key,
+                    entry: {
+                        entry_type : "normal",
+                        schema : "false",
+                        vertices: [],
+                        data: value
+                    }
+                }
+    
+                const socket = new Socket().connect(2310, this.uri, (e)=>{
+                    if (e) throw e
+                })
+    
+                socket.on("connect", (error)=>{
+                    if (error) throw error
+    
+                    socket.write(JSON.stringify(body)+"\n", (e)=>{
+                        if (e) throw e
+                    })
+                })
+    
+            
+                socket.on("data", (data)=>{
+                    console.log("BBB")
+                    socket.write("close\n");
+                    resolve(data.toString());
+                })
+
+                socket.on("error", (err)=>{
+                    
+                })
+    
+            }else{
+                const body = {
+                    instruction : "insert",
+                    key: key,
+                    entry: {
+                        entry_type : "ref",
+                        schema : to,
+                        vertices: [],
+                        data: value
+                    }
                 }
             }
+        })
+        
+    }
 
+    async get(key){
+
+        return new Promise((resolve, reject)=>{
+            const body = {
+                instruction : "get",
+                key: key,
+            }
+    
+    
             const socket = new Socket().connect(2310, this.uri, (e)=>{
                 if (e) throw e
             })
-
+    
             socket.on("connect", (error)=>{
                 if (error) throw error
+    
+                socket.write(JSON.stringify(body)+"\n", (e)=>{
+                    if (e) throw e
+                })
 
+            })
+    
+            socket.on("data", (data)=>{
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
+            })
+        })
+
+       
+    }
+
+    async dfs(key){
+
+        return new Promise((resolve, reject)=>{
+            const body = {
+                instruction : "dfs",
+                key: key,
+            }
+    
+    
+            const socket = new Socket().connect(2310, this.uri, (e)=>{
+                if (e) throw e
+            })
+    
+            socket.on("connect", (error)=>{
+                if (error) throw error
+    
+                socket.write(JSON.stringify(body)+"\n", (e)=>{
+                    if (e) throw e
+                })
+
+            })
+    
+            socket.on("data", (data)=>{
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
+            })
+        })
+
+       
+    }
+
+    async update(key, property, value){
+
+        return new Promise((resolve, reject)=>{
+            const body = {
+                instruction : "update",
+                key: key,
+                property: property,
+                new_value: value
+            }
+    
+    
+            const socket = new Socket().connect(2310, this.uri, (e)=>{
+                if (e) throw e
+            })
+    
+            socket.on("connect", (error)=>{
+                if (error) throw error
+    
+                socket.write(JSON.stringify(body)+"\n", (e)=>{
+                    if (e) throw e
+                })
+            })
+    
+            socket.on("data", (data)=>{
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
+            })
+        })
+
+       
+    }
+
+    async delete(key){
+
+        return new Promise((resolve, reject) =>{
+            const body = {
+                instruction : "delete",
+                key: key,
+            }
+    
+    
+            const socket = new Socket().connect(2310, this.uri, (e)=>{
+                if (e) throw e
+            })
+    
+            socket.on("connect", (error)=>{
+                if (error) throw error
+    
+                socket.write(JSON.stringify(body)+"\n", (e)=>{
+                    if (e) throw e
+                })
+    
+            })
+    
+            socket.on("data", (data)=>{
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
+            })
+        })
+
+    
+    }
+
+    async bfs(key){
+
+        return new Promise((resolve, reject) =>{
+            const body = {
+                instruction : "bfs",
+                key: key,
+            }
+    
+    
+            const socket = new Socket().connect(2310, this.uri, (e)=>{
+                if (e) throw e
+            })
+    
+            socket.on("connect", (error)=>{
+                if (error) throw error
+    
                 socket.write(JSON.stringify(body)+"\n", (e)=>{
                     if (e) throw e
                 })
@@ -40,209 +215,53 @@ class Instance{
                     if (e) throw e
                 })
             })
-
-        
+    
             socket.on("data", (data)=>{
-                socket.destroy()
-                return data.toString();
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
             })
+        })
 
-        }else{
+
+      
+    }
+
+    async add_vertex(key, vertex){
+
+        return new Promise((resolve, reject)=>{
             const body = {
-                instruction : "insert",
+                instruction : "add_vertex",
                 key: key,
-                entry: {
-                    entry_type : "ref",
-                    schema : to,
-                    vertices: [],
-                    data: value
-                }
+                vertex: vertex
             }
-        }
-    }
-
-    get(key){
-
-        const body = {
-            instruction : "get",
-            key: key,
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
+    
+    
+            const socket = new Socket().connect(2310, this.uri, (e)=>{
                 if (e) throw e
             })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
+    
+            socket.on("connect", (error)=>{
+                if (error) throw error
+    
+                socket.write(JSON.stringify(body)+"\n", (e)=>{
+                    if (e) throw e
+                })
+    
+                socket.write("close\n", (e)=>{
+                    if (e) throw e
+                })
+            })
+    
+            socket.on("data", (data)=>{
+                resolve(JSON.parse(data.toString()));
+                socket.destroy();
             })
         })
 
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
-    }
-
-    dfs(key){
-
-        const body = {
-            instruction : "dfs",
-            key: key,
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
-                if (e) throw e
-            })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
-            })
-        })
-
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
-    }
-
-    update(key, property, value){
-        const body = {
-            instruction : "update",
-            key: key,
-            property: property,
-            new_value: value
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
-                if (e) throw e
-            })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
-            })
-        })
-
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
-    }
-
-    delete(key){
-
-        const body = {
-            instruction : "delete",
-            key: key,
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
-                if (e) throw e
-            })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
-            })
-        })
-
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
-    }
-
-    bfs(key){
-
-        const body = {
-            instruction : "bfs",
-            key: key,
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
-                if (e) throw e
-            })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
-            })
-        })
-
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
-    }
-
-    add_vertex(key, vertex){
-
-        const body = {
-            instruction : "add_vertex",
-            key: key,
-            vertex: vertex
-        }
-
-
-        const socket = new Socket().connect(2310, this.uri, (e)=>{
-            if (e) throw e
-        })
-
-        socket.on("connect", (error)=>{
-            if (error) throw error
-
-            socket.write(JSON.stringify(body)+"\n", (e)=>{
-                if (e) throw e
-            })
-
-            socket.write("close\n", (e)=>{
-                if (e) throw e
-            })
-        })
-
-        socket.on("data", (data)=>{
-            socket.destroy();
-            return data.toJSON();
-        })
+      
     }
 }
+
 
 module.exports = {
     Instance
